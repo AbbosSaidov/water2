@@ -1,0 +1,13 @@
+String LOGINBASEURL = 'http://213.230.126.31';
+final String HEADERURL = '/Vital_Planshet/hs/data/authorization/auth';
+//String LOGINBASEURL = 'https://learnig1.firebaseio.com';
+final String COUNTERPARTYURL = '/Vital_Planshet/hs/data/counterparty/get';
+//final String COUNTERPARTYURL = '/counterparty/get.json';
+//final String SUMMPARTYURL = '/summary/get.json';
+final String SUMMPARTYURL = '/Vital_Planshet/hs/data/summary/get';
+//final String HEADERURL = '/as.json';
+String BASELOGIN = 'PlanshetUser';
+String BASEPASSWORD = 'USR@6501559';
+final String LOCATIONURL = '/Vital_Planshet/hs/data/location/post';
+String LOGIN = '';
+String PASSWORD = '';
