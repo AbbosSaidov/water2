@@ -4,13 +4,14 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:water2/blocks/clientPage/bloc/clientpage_bloc.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:water2/service/clientPageRepository/clientpagerepository.dart';
-//import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
+import 'package:date_range_picker/date_range_picker.dart' as DateRangePicker;
 import 'package:water2/db_operation.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:location_permissions/location_permissions.dart';
@@ -178,22 +179,32 @@ class _ClientItemPageState extends State<ClientItemPage> {
                             ),
                             FlatButton(
                               onPressed: () async {
-                          //      final List<DateTime> picked =
-                          //      await DateRagePicker.showDatePicker(
-                          //          context: context,
-                          //          initialFirstDate: new DateTime(2020),
-                          //          initialLastDate: (new DateTime.now())
-                          //              .add(new Duration(days: 7)),
-                          //          firstDate: new DateTime(2019),
-                          //          lastDate: new DateTime(2023));
-                          //      if (picked != null && picked.length == 2) {
-                          //        onSearchDate(picked);
-                          //      }
-
-                                //  Navigator.of(context).push(
-                                //      MaterialPageRoute(
-                                //          builder: (context) =>
-                                //              SummaryPage()))
+                              final List<DateTime> picked =
+                              await DateRangePicker.showDatePicker(
+                                  context: context,
+                                  initialFirstDate: new DateTime(2020),
+                                  initialLastDate: (new DateTime.now())
+                                      .add(new Duration(days: 7)),
+                                  firstDate: new DateTime(2019),
+                                  lastDate: new DateTime(2023));
+                              if (picked != null && picked.length == 2) {
+                                onSearchDate(picked);
+                                }
+                             //   final List<DateTime> picked = await DateRangePicker.showDatePicker(
+                             //       context: context,
+                             //       initialFirstDate: new DateTime.now(),
+                             //       initialLastDate: (new DateTime.now()).add(new Duration(days: 7)),
+                             //       firstDate: new DateTime(2015),
+                             //       lastDate: new DateTime(DateTime.now().year + 2)
+                             //   );
+                             //   if (picked != null && picked.length == 2) {
+                             //     onSearchDate(picked);
+                             //     //print(picked);
+                             //   }
+                               //   Navigator.of(context).push(
+                               //       MaterialPageRoute(
+                               //           builder: (context) =>
+                               //               SummaryPage()));
                               },
                               color: Colors.blue,
                               padding: EdgeInsets.all(10.0),
@@ -545,29 +556,24 @@ class _ClientItemPageState extends State<ClientItemPage> {
     try {
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String path = appDocDir.path;
-      print("codfe="+widget.user.code.toString());
-      fileaLL = io.Directory("$path/").listSync();
-      for(int i=0;i<fileaLL.length;i++){
-        print("Files="+i.toString()+fileaLL[i].toString());
-      }
-  //    _image= File('$path/image2.png');
-  //    im1= File('$path/image'+widget.user.code.toString()+'1.png').existsSync();
-  //    im2= File('$path/image'+widget.user.code.toString()+'2.png').existsSync();
-  //    im3= File('$path/image'+widget.user.code.toString()+'3.png').existsSync();
-  //    print("st="+im1.toString());
-  //    print("st2="+im2.toString());
-  //    print("st3="+im3.toString());
-  //    setState((){
-  //      if(im1){
-  //        _image1= File('$path/image'+widget.user.code.toString()+'1.png');
-  //      }
-  //      if(im2){
-  //        _image2= File('$path/image'+widget.user.code.toString()+'2.png');
-  //      }
-  //      if(im3){
-  //        _image3= File('$path/image'+widget.user.code.toString()+'3.png');
-  //      }
-  //    });
+      //_image= File('$path/image2.png');
+      im1= File('$path/image'+widget.user.code.toString()+'1.png').existsSync();
+      im2= File('$path/image'+widget.user.code.toString()+'2.png').existsSync();
+      im3= File('$path/image'+widget.user.code.toString()+'3.png').existsSync();
+      print("st="+im1.toString());
+      print("st2="+im2.toString());
+      print("st3="+im3.toString());
+      setState((){
+        if(im1){
+          _image1= File('$path/image'+widget.user.code.toString()+'1.png');
+        }
+        if(im2){
+          _image2= File('$path/image'+widget.user.code.toString()+'2.png');
+        }
+        if(im3){
+          _image3= File('$path/image'+widget.user.code.toString()+'3.png');
+        }
+      });
     }catch(Exception){
       print('error taking picture ${Exception.toString()}');
     }
@@ -589,25 +595,40 @@ class _ClientItemPageState extends State<ClientItemPage> {
         if(im1 && im2 && im3){
           xop++;
         }
-
+        final path2 = Directory("storage/emulated/0/Waterimage");
+        var status = await Permission.storage.status;
+        if (!status.isGranted) {
+          await Permission.storage.request();
+        }
+        if((await path2.exists())){
+        //  return path2.path;
+        }else{
+          path2.create();
+        }
         if(!im1){
           _image1 = File(pickedFile.path);im1=true;
           await _image1.copy('$path/image'+widget.user.code.toString()+'1.png');
+          await _image1.copy('storage/emulated/0/Waterimage/'+widget.user.code.toString()+'1.png');
         }else if(!im2){
           _image2 = File(pickedFile.path);im2=true;
           await _image2.copy('$path/image'+widget.user.code.toString()+'2.png');
+          await _image2.copy('storage/emulated/0/Waterimage/'+widget.user.code.toString()+'2.png');
         }else if(!im3){
           _image3 = File(pickedFile.path);im3=true;
           await _image3.copy('$path/image'+widget.user.code.toString()+'3.png');
+          await _image3.copy('storage/emulated/0/Waterimage/'+widget.user.code.toString()+'3.png');
         }else if(xop==2){
           _image1 = File(pickedFile.path);im1=true;
           await _image1.copy('$path/image'+widget.user.code.toString()+'1.png');
+          await _image1.copy('storage/emulated/0/Waterimage/'+widget.user.code.toString()+'1.png');
         }else if(xop==3){
           _image2 = File(pickedFile.path);im2=true;
           await _image2.copy('$path/image'+widget.user.code.toString()+'2.png');
+          await _image2.copy('storage/emulated/0/Waterimage/'+widget.user.code.toString()+'2.png');
         }else if(xop==4){
           _image3 = File(pickedFile.path);im3=true;
           await _image3.copy('$path/image'+widget.user.code.toString()+'3.png');
+          await _image3.copy('storage/emulated/0/Waterimage/'+widget.user.code.toString()+'3.png');
           if(xop==4){xop=1;}
         }
    // copy the file to a new path

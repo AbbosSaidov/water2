@@ -10,7 +10,7 @@
 
 
     <application
-        android:label="water2"
+        android:label="Water_Delivery_App2"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
         <activity
